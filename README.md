@@ -1,5 +1,5 @@
 
-# Residual Dynamics Learning for Nonlinear System Identification
+# Identification of Nonlinear Pendulum Dynamics via Residual Physics Learning
 
 This repository implements a **hybrid physics–neural network approach** for identifying the nonlinear dynamics of an inverted pendulum.
 A neural network is trained to learn the **residual dynamics** that correct an analytical physics model.
