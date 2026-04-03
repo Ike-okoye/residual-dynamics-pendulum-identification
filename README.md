@@ -1,62 +1,162 @@
-# Learning-Based System Identification for Control of Nonlinear Dynamical Systems
 
-## Overview
-This project investigates the use of supervised learning for system identification of nonlinear dynamical systems. A neural network is trained to learn the state transition dynamics of a system from simulated data. The learned model is then used for prediction and model-based control experiments.
+# Residual Dynamics Learning for Nonlinear System Identification
 
-The repository contains tools for simulating nonlinear systems, generating training datasets, training neural network dynamics models, and evaluating their performance against analytical models.
+This repository implements a **hybrid physics–neural network approach** for identifying the nonlinear dynamics of an inverted pendulum.
+A neural network is trained to learn the **residual dynamics** that correct an analytical physics model.
 
----
+The repository includes scripts to:
 
-## Motivation
-Classical control methods depend on accurate mathematical models of physical systems. In many real-world applications, system dynamics are nonlinear, uncertain, or time-varying, making analytical modelling difficult. Data-driven approaches provide an alternative by learning system dynamics directly from observed data.
-
-Learning-based system identification enables the development of models that can capture nonlinear behaviors and support control design when accurate analytical models are unavailable.
-
----
-
-## Project Objectives
-- Simulate a nonlinear dynamical system.
-- Generate datasets for system identification.
-- Train a neural network to learn system dynamics.
-- Evaluate prediction accuracy of the learned model.
-- Investigate the use of the learned model in model-based control.
+* generate simulation data
+* train the residual dynamics model
+* evaluate prediction accuracy
+* reproduce all experimental plots
 
 ---
 
-## System Model
-Experiments are conducted using a nonlinear inverted pendulum system. The system state is defined as
+# Repository Structure
 
-\[
-x = [\theta, \dot{\theta}]
-\]
+```
+src/
+├── dynamics.py            # Inverted pendulum physics model
+├── dataset.py             # Dataset generation
+└── train_model.py         # Residual neural network training
 
-where:
-- \( \theta \) represents the pendulum angle
-- \( \dot{\theta} \) represents angular velocity
+experiments/
+├── linear_baseline.py     # Linear system identification baseline
+├── evaluate.py            # RMSE / MAE evaluation
+├── model_comparison.py    # One-step trajectory comparison
+├── rollout_trajectory.py  # Multi-step rollout trajectory
+├── rollout_error_curve.py # Rollout RMSE vs horizon
+└── phase_portrait.py      # Phase portrait comparison
 
-The control input is a torque applied at the pivot.
-
-The system dynamics are nonlinear and provide a suitable benchmark for evaluating learning-based identification methods.
-
----
-
-## Methodology
-The project follows a data-driven system identification workflow:
-
-1. Simulate nonlinear system dynamics.
-2. Generate training data using randomized control inputs.
-3. Train a neural network to approximate the state transition function.
-4. Evaluate model accuracy on unseen trajectories.
-5. Compare predictions from the learned model with analytical dynamics.
-
-The learned model represents the state transition function:
-
-\[
-x_{k+1} = f_\theta(x_k, u_k)
-\]
-
-where \( f_\theta \) is a neural network parameterized by \( \theta \).
+models/                    # Trained neural network weights
+results/                   # Generated plots and tables
+```
 
 ---
 
-## Repository Structure
+# Installation
+
+Install the required Python packages:
+
+```bash
+pip install torch numpy matplotlib pandas
+```
+
+---
+
+# 1. Train the Residual Dynamics Model
+
+Run the training script:
+
+```bash
+python -m src.train_model
+```
+
+This generates the trained model:
+
+```
+models/dynamics_model.pth
+```
+
+---
+
+# 2. Compute Quantitative Evaluation Metrics
+
+Run:
+
+```bash
+python -m experiments.evaluate
+```
+
+This produces a table comparing the residual model and the linear baseline.
+
+Output:
+
+```
+results/error_table.csv
+```
+
+---
+
+# 3. Generate Figures
+
+The following scripts reproduce the figures used in the results section.
+
+---
+
+## Trajectory Comparison
+
+```bash
+python -m experiments.model_comparison
+```
+
+Output:
+
+```
+results/model_comparison.pdf
+```
+
+Compares the predicted trajectory of each model against the true dynamics.
+
+---
+
+## Multi-Step Rollout Trajectory
+
+```bash
+python -m experiments.rollout_trajectory
+```
+
+Output:
+
+```
+results/rollout_trajectory.pdf
+```
+
+Shows long-horizon prediction behavior.
+
+---
+
+## Rollout Error Curve
+
+```bash
+python -m experiments.rollout_error_curve
+```
+
+Output:
+
+```
+results/rmse_curve.pdf
+```
+
+Shows prediction error growth over the rollout horizon.
+
+---
+
+## Phase Portrait
+
+```bash
+python -m experiments.phase_portrait
+```
+
+Output:
+
+```
+results/phase_portrait.pdf
+```
+
+Compares the state-space dynamics of each model.
+
+---
+
+# Results
+
+Running the scripts above reproduces:
+
+* trajectory comparison
+* phase portrait
+* rollout trajectory
+* rollout error curve
+* RMSE / MAE evaluation table
+
+All outputs are saved in the **results/** directory.
