@@ -1,6 +1,27 @@
+# Python cache
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.env
-.ipynb_checkpoints
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Virtual environments
+venv/
+.env/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Generated experiment outputs
+results/*.pdf
+results/*.png
+results/*.csv
+
+# Trained models
+models/*.pth
+
+# VS Code
+.vscode/
